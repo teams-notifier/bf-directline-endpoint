@@ -1,0 +1,12 @@
+botbuilder-integration-aiohttp>=4.15.0
+python-dotenv
+asyncpg
+httpx
+blibs
+opentelemetry-distro
+opentelemetry-exporter-otlp
+opentelemetry-instrumentation-asyncpg
+opentelemetry-instrumentation-httpx
+opentelemetry-instrumentation-asyncio
+opentelemetry-instrumentation-aiohttp-server
+opentelemetry-instrumentation-aiohttp-client

@@ -1,0 +1,71 @@
+name: "Build OCI Image"
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+  workflow_dispatch:
+
+jobs:
+  build-image:
+    name: "Build OCI image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Define TARGETS
+        run: |
+          REPOS="ghcr.io/${{ github.repository }}"
+          IMG_TAGS="latest"
+          [ ${GITHUB_REF_TYPE:-} == 'branch' ] && IMG_TAGS="$(echo $GITHUB_REF_NAME | sed -e 's,[^0-9A-Za-z_.-],-,g' | cut -c 1-128)"
+
+          if [ ${GITHUB_REF_TYPE:-} == 'tag' -a -n "$(echo $GITHUB_REF_NAME | grep -iE '^v[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.-]+)?$')" ]; then
+            TAG=${GITHUB_REF_NAME#v}
+            RELEASE=""
+            case "$TAG" in
+              *-*)
+                RELEASE="-${TAG#*-}"
+                ;;
+            esac
+            SEMVER_CORE="${TAG%%-*}"
+            IMG_TAGS="${IMG_TAGS} $TAG ${SEMVER_CORE%.*}${RELEASE} ${SEMVER_CORE%%.*}${RELEASE}"
+          fi
+
+          echo "Targets:"
+          TARGETS=""
+          for REPO in $REPOS; do
+            for IMG_TAG in $IMG_TAGS; do
+              TARGETS="${TARGETS},${REPO}:${IMG_TAG}"
+              echo "- ${REPO}:${IMG_TAG}"
+            done
+          done
+          echo TARGETS=${TARGETS#,} >>$GITHUB_ENV
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.TARGETS }}
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true

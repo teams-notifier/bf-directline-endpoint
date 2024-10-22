@@ -74,6 +74,7 @@ class NotiTeamsBot(ActivityHandler):
                     Activity(
                         type=ActivityTypes.message,
                         attachments=[CardFactory.adaptive_card(json.load(open("cards/gretting.json")))],
+                        summary="Hi, to get a token, click this message.",
                     )
                 )
 
@@ -87,6 +88,7 @@ class NotiTeamsBot(ActivityHandler):
                             attachments=[
                                 CardFactory.adaptive_card(json.load(open("cards/gretting-personal.json")))
                             ],
+                            summary="Hi, to get a token, click this message.",
                         )
                     )
                     return

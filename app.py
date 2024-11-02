@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import asyncio
+
 import logging
 import sys
 import traceback
@@ -38,7 +39,12 @@ CONFIG = DefaultConfig()
 
 # Create adapter.
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
-ADAPTER = CloudAdapter(ConfigurationBotFrameworkAuthentication(CONFIG))
+ADAPTER = CloudAdapter(
+    ConfigurationBotFrameworkAuthentication(
+        CONFIG,
+        credentials_factory=CONFIG.get_credential_factory(),
+    )
+)
 
 
 # Catch-all for errors.

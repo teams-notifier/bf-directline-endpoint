@@ -2,15 +2,16 @@
 import json
 import logging
 import time
+from typing import Any
 from typing import Optional
 
 import httpx
 import jwt
 from aiohttp import web
+from botbuilder.integration.aiohttp import CloudAdapter
 from opentelemetry import trace
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 
-from botbuilder.integration.aiohttp import CloudAdapter
 from config import DefaultConfig
 
 
@@ -28,7 +29,7 @@ class MSGraphHelper:
         self._app = app
         self._config = config
         self._access_token: Optional[str] = None
-        self._decoded_access_token: dict = {}
+        self._decoded_access_token: dict[str, Any] = {}
         self._client = httpx.AsyncClient()
         self._base = "https://graph.microsoft.com/v1.0/"
 
@@ -57,7 +58,7 @@ class MSGraphHelper:
                 }
 
     @tracer.start_as_current_span("query")
-    async def _query(self, target: str, params=None, method="GET", json=None) -> dict:
+    async def _query(self, target: str, params=None, method="GET", json=None) -> Any:
         await self._check_token()
         span = trace.get_current_span()
         span.update_name(f"{method} /v1.0/{target}")
@@ -70,7 +71,7 @@ class MSGraphHelper:
         response.raise_for_status()
         return response.json()
 
-    async def _query_and_consume(self, target: str, params=None) -> dict:
+    async def _query_and_consume(self, target: str, params=None) -> Any:
         res = await self._query(
             target,
             params,

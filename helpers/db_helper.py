@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-
 import asyncio
-from dataclasses import dataclass
 import json
-from aiohttp import web
-import asyncpg
+import logging
+from dataclasses import dataclass
+
 import asyncpg.connect_utils
 import asyncpg.pgproto.pgproto
+from aiohttp import web
+from opentelemetry import trace
 
 from config import DefaultConfig
 from helpers.lr_seen import LeastRecentlySeen
-import logging
-
-from opentelemetry import trace
 
 tracer = trace.get_tracer(__name__)
 
@@ -39,7 +37,7 @@ class NoResetConnection(asyncpg.connection.Connection):
         params: asyncpg.connect_utils._ConnectionParameters,
     ) -> None:
         super().__init__(protocol, transport, loop, addr, config, params)
-        self._reset_query = []
+        self._reset_query: list[str] = []
 
 
 class DBHelper:

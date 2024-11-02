@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 import asyncio
-
 import logging
 import sys
 import traceback
@@ -11,19 +9,23 @@ from datetime import datetime
 from typing import Awaitable
 
 import asyncpg
-
 import blibs
 import dotenv
 from aiohttp import web
-from aiohttp.web import Request, Response
+from aiohttp.web import Request
+from aiohttp.web import Response
 from botbuilder.core import TurnContext
 from botbuilder.core.integration import aiohttp_error_middleware
-from botbuilder.integration.aiohttp import CloudAdapter, ConfigurationBotFrameworkAuthentication
-from botbuilder.schema import Activity, ActivityTypes
+from botbuilder.integration.aiohttp import CloudAdapter
+from botbuilder.integration.aiohttp import ConfigurationBotFrameworkAuthentication
+from botbuilder.schema import Activity
+from botbuilder.schema import ActivityTypes
 
 from bots import NotiTeamsBot
 from config import DefaultConfig
-from helpers import Helpers, MessageHelper, MSGraphHelper
+from helpers import Helpers
+from helpers import MessageHelper
+from helpers import MSGraphHelper
 from helpers.db_helper import DBHelper
 
 blibs.init_root_logger()
@@ -86,7 +88,7 @@ async def messages(req: Request) -> Response:
     return await ADAPTER.process(req, BOT)  # type: ignore
 
 
-def create_task_log_exception(awaitable: Awaitable) -> asyncio.Task:
+def create_task_log_exception(awaitable: Awaitable) -> asyncio.Task:  # type: ignore
     async def _log_exception(awaitable):
         try:
             return await awaitable

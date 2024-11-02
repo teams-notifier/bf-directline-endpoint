@@ -2,14 +2,18 @@ import json
 import logging
 
 from aiohttp import web
-from botbuilder.core import ActivityHandler, CardFactory, TurnContext
+from botbuilder.core import ActivityHandler
+from botbuilder.core import CardFactory
+from botbuilder.core import TurnContext
 from botbuilder.core.teams.teams_info import TeamsInfo
-from botbuilder.schema import Activity, ActivityTypes, ChannelAccount, ResourceResponse
+from botbuilder.schema import Activity
+from botbuilder.schema import ActivityTypes
+from botbuilder.schema import ChannelAccount
+from botbuilder.schema import ResourceResponse
+from opentelemetry import trace
 
 from helpers import Helpers
 from helpers.db_helper import AADOIDInfo
-
-from opentelemetry import trace
 
 tracer = trace.get_tracer(__name__)
 
@@ -21,12 +25,12 @@ class NotiTeamsBot(ActivityHandler):
 
     @property
     def helpers(self) -> Helpers:
-        return self.app["helpers"]
+        ret: Helpers = self.app["helpers"]
+        return ret
 
     async def on_turn(self, turn_context: TurnContext):
         with tracer.start_as_current_span("on_turn"):
             return await super().on_turn(turn_context)
-        return await super().on_turn(turn_context)
 
     async def on_message_reaction_activity(self, turn_context: TurnContext):
         return await super().on_message_reaction_activity(turn_context)

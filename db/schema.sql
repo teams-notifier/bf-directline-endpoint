@@ -314,4 +314,3 @@ ALTER TABLE ONLY public.conversation_token
 --
 -- Dbmate schema migrations
 --
-

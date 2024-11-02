@@ -1,0 +1,65 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/psf/black
+  rev: 24.10.0
+  hooks:
+  - id: black
+    args: [--safe, --line-length=110]
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+    args: [--allow-multiple-documents]
+  - id: check-toml
+  - id: check-added-large-files
+  - id: check-merge-conflict
+  - id: detect-private-key
+  - id: debug-statements
+    language_version: python3
+
+- repo: https://github.com/PyCQA/flake8
+  rev: 7.1.1
+  hooks:
+  - id: flake8
+    args: [--max-line-length, "110"]
+    language_version: python3
+
+
+- repo: https://github.com/asottile/reorder_python_imports
+  rev: v3.13.0
+  hooks:
+  - id: reorder-python-imports
+    args: ["--application-directories=.:src", "--py36-plus"]
+
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.17.0
+  hooks:
+  - id: pyupgrade
+    args: [--py36-plus]
+
+- repo: https://github.com/Yelp/detect-secrets
+  rev: v1.5.0
+  hooks:
+  - id: detect-secrets
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.11.2
+  hooks:
+  - id: mypy
+#    files: ^*.py
+    args:
+      - --check-untyped-defs
+      - --disallow-any-generics
+      - --ignore-missing-imports
+      - --no-implicit-optional
+      - --show-error-codes
+      - --strict-equality
+      - --warn-redundant-casts
+      - --warn-return-any
+      - --warn-unreachable
+      - --warn-unused-configs
+      - --no-implicit-reexport

@@ -1,16 +1,15 @@
-from botframework.connector.auth import AuthenticationConstants
-from botbuilder.integration.aiohttp import CloudAdapter
-from botframework.connector.aio import ConnectorClient
-from config import DefaultConfig
 from aiohttp import web
-from botbuilder.schema import (
-    Activity,
-    ConversationParameters,
-    ChannelAccount,
-    ResourceResponse,
-)
-
+from botbuilder.integration.aiohttp import CloudAdapter
+from botbuilder.schema import Activity
+from botbuilder.schema import ChannelAccount
+from botbuilder.schema import ConversationParameters
+from botbuilder.schema import ResourceResponse
+from botframework.connector.aio import ConnectorClient
+from botframework.connector.auth import AuthenticationConstants
 from opentelemetry import trace
+
+from config import DefaultConfig
+
 tracer = trace.get_tracer(__name__)
 
 
@@ -43,13 +42,13 @@ class MessageHelper:
         user_teams_id: str,
         activity_to_send: Activity | str,
     ) -> str | None:
-        activity_id = None
+        activity_response: ResourceResponse | None = None
 
         @tracer.start_as_current_span("send_activity")
         async def send_activity(turn_context):
-            nonlocal activity_id
+            nonlocal activity_response
             response = await turn_context.send_activity(activity_to_send)
-            activity_id = response
+            activity_response = response
 
         with tracer.start_as_current_span("create_conversation") as span:
             await self._adapter.create_conversation(
@@ -67,7 +66,11 @@ class MessageHelper:
                 ),
                 service_url="https://smba.trafficmanager.net/amer/",
             )
-            if activity_id is not None:
-                assert isinstance(activity_id, ResourceResponse)
-                span.set_attribute("teams.activity_id", activity_id.id)
-            return activity_id
+            if activity_response is not None:
+                assert isinstance(activity_response, ResourceResponse)
+                span.set_attribute("teams.activity_id", activity_response.id)
+                if isinstance(activity_response.id, str):
+                    return activity_response.id
+                else:
+                    return str(activity_response.id)
+            return None

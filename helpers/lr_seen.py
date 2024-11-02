@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 from collections import OrderedDict
 from threading import Lock
 from typing import Hashable
@@ -9,7 +8,7 @@ class LeastRecentlySeen:
     def __init__(self, maxsize: int = 0) -> None:
         self._maxsize: int = maxsize
         self._lock = Lock()
-        self._seen: OrderedDict = OrderedDict()
+        self._seen: OrderedDict[Hashable, None] = OrderedDict()
 
     def look_and_remember(self, key: Hashable) -> bool:
         res = False

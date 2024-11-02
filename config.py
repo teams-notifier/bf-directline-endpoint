@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+import base64
 import hashlib
 import os
+
 import dotenv
 from botframework.connector.auth import CertificateServiceClientCredentialsFactory
 from botframework.connector.auth import PasswordServiceClientCredentialFactory
 from botframework.connector.auth import ServiceClientCredentialsFactory
-import base64
 
 
 """ Bot Configuration """
@@ -35,6 +35,12 @@ class DefaultConfig:
             return PasswordServiceClientCredentialFactory(
                 app_id=self.APP_ID,
                 password=self.APP_PASSWORD,
+            )
+
+        if not self.APP_CERTIFICATE or not self.APP_PRIVATEKEY:
+            raise ValueError(
+                "missing either MICROSOFT_APP_PASSWORD or "
+                "MICROSOFT_APP_CERTIFICATE and MICROSOFT_APP_PRIVATEKEY"
             )
 
         certificate = base64.b64decode(self.APP_CERTIFICATE).decode("ascii")

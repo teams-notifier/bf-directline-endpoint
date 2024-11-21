@@ -6,6 +6,8 @@ Authentication is either relying on `MICROSOFT_APP_PASSWORD` or `MICROSOFT_APP_C
 
 Environment variables or `.env`:
 
+* `PORT`: Port to listen to (default: 3978)
+
 * `MICROSOFT_APP_ID`: App registration application id
 * `MICROSOFT_APP_PASSWORD`: Application password
 

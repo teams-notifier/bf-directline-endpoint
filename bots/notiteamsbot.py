@@ -170,9 +170,13 @@ class NotiTeamsBot(ActivityHandler):
                 )
         elif conv_type == "channel":
             teamsdetails = await TeamsInfo.get_team_details(turn_context)
-            conversation_description = (
-                f"channel '{teamsdetails.name} > {conversation_reference.conversation.name}'"
-            )
+            if conversation_reference.conversation.name is not None:
+                conversation_description = (
+                    f"channel '{teamsdetails.name} > {conversation_reference.conversation.name}'"
+                )
+            else:
+                conversation_description = f"team '{teamsdetails.name}'"
+
         elif conv_type == "personal":
             conversation_description = "this conversation"
         message = f"Hi there, the token to publish to {conversation_description} is:\n`{token}`\n"

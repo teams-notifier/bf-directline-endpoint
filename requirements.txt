@@ -1,4 +1,4 @@
-botbuilder-integration-aiohttp>=4.15.0
+botbuilder-integration-aiohttp>=4.16.1
 python-dotenv
 asyncpg
 httpx

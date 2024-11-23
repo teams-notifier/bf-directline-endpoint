@@ -1,6 +1,21 @@
 FROM python:slim-bookworm
 
-LABEL org.opencontainers.image.source=https://github.com/teams-notifier/bf-directline-endpoint
+ARG VERSION
+ARG SEMVER_CORE
+ARG COMMIT_SHA
+ARG GITHUB_REPO
+ARG BUILD_DATE
+
+ENV VERSION=${VERSION}
+ENV SEMVER_CORE=${SEMVER_CORE}
+ENV COMMIT_SHA=${COMMIT_SHA}
+ENV BUILD_DATE=${BUILD_DATE}
+ENV GITHUB_REPO=${GITHUB_REPO}
+
+LABEL org.opencontainers.image.source=${GITHUB_REPO}
+LABEL org.opencontainers.image.created=${BUILD_DATE}
+LABEL org.opencontainers.image.version=${VERSION}
+LABEL org.opencontainers.image.revision=${COMMIT_SHA}
 
 RUN set -e \
     && useradd -ms /bin/bash -d /app app

@@ -45,6 +45,10 @@ jobs:
             done
           done
           echo TARGETS=${TARGETS#,} >>$GITHUB_ENV
+          echo BUILD_DATE="$(date -u -Is)" >>$GITHUB_ENV
+          echo COMMIT_SHA=$GITHUB_SHA  >>$GITHUB_ENV
+          echo GITHUB_REPO="ghcr.io/${{ github.repository }}" >>$GITHUB_ENV
+
 
       - uses: docker/setup-buildx-action@v3
 
@@ -62,6 +66,12 @@ jobs:
           context: .
           push: true
           tags: ${{ env.TARGETS }}
+          build-args: |
+            VERSION=${{ env.TAG }}
+            SEMVER_CORE=${{ env.SEMVER_CORE }}
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            COMMIT_SHA=${{ env.COMMIT_SHA }}
+            GITHUB_REPO=${{ env.GITHUB_REPO }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1

@@ -144,13 +144,16 @@ async def periodic_task(app):
 async def init_helpers(app: web.Application):
     """Initialize a connection pool."""
     try:
-        app["helpers"] = Helpers(
+        helpers = Helpers(
             MessageHelper(app, ADAPTER, CONFIG),
             MSGraphHelper(app, ADAPTER, CONFIG),
             DBHelper(app, CONFIG),
         )
+        app["helpers"] = helpers
+        await helpers.db.check_connection()
     except Exception as e:
         logger.exception(e)
+        raise e
 
     yield
 

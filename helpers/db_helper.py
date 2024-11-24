@@ -63,6 +63,10 @@ class DBHelper:
     async def acquire(self) -> asyncpg.pool.PoolAcquireContext:
         return (await self.pool()).acquire()
 
+    async def check_connection(self):
+        async with await self.acquire() as connection:
+            await connection.fetchval("SELECT 1")
+
     async def save_message_for_deletion(self, conv_id: str, activity_id: str) -> None:
         connection: asyncpg.pool.PoolConnectionProxy
         async with await self.acquire() as connection:

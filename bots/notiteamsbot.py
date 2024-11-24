@@ -179,7 +179,7 @@ class NotiTeamsBot(ActivityHandler):
 
         elif conv_type == "personal":
             conversation_description = "this conversation"
-        message = f"Hi there, the token to publish to {conversation_description} is:\n`{token}`\n"
+        message = f"Hi there, your token to publish to {conversation_description} is:\n`{token}`\n"
 
         await self.helpers.msg.send_private_message(
             tenant_id=tenant_id,

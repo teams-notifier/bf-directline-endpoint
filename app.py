@@ -88,6 +88,17 @@ async def messages(req: Request) -> Response:
     return await ADAPTER.process(req, BOT)  # type: ignore
 
 
+async def healthcheck(req: Request) -> Response:
+    helpers: Helpers = req.app["helpers"]
+    try:
+        async with await helpers.db.acquire() as connection:
+            result = await connection.fetchval("SELECT true FROM conversation_reference")
+    except Exception as e:
+        logger.exception(f"health check failed with {type(e)}: {e}")
+        raise web.HTTPInternalServerError(reason=f"{type(e)}: {e}")
+    return web.json_response({"ok": result})
+
+
 def create_task_log_exception(awaitable: Awaitable) -> asyncio.Task:  # type: ignore
     async def _log_exception(awaitable):
         try:
@@ -162,6 +173,7 @@ async def init_helpers(app: web.Application):
 
 APP = web.Application(middlewares=[aiohttp_error_middleware])
 APP.router.add_post("/api/messages", messages)
+APP.router.add_get("/healthz", healthcheck)
 APP.cleanup_ctx.append(init_helpers)
 APP.cleanup_ctx.append(periodic_task)
 

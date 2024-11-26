@@ -10,14 +10,12 @@ import jwt
 from aiohttp import web
 from botbuilder.integration.aiohttp import CloudAdapter
 from opentelemetry import trace
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 
 from config import DefaultConfig
 
 
 logger = logging.getLogger(__name__)
 tracer = trace.get_tracer(__name__)
-HTTPXClientInstrumentor().instrument()
 
 
 def jprint(value):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import asyncio
 import logging
+import os
 import sys
 import traceback
 import uuid
@@ -182,6 +183,7 @@ BOT = NotiTeamsBot(APP)
 
 
 if __name__ == "__main__":
+    logging.info("starting app version %s", os.environ.get("VERSION", "v0.0.0-dev"))
     try:
         web.run_app(APP, host="0.0.0.0", port=CONFIG.PORT)
     except Exception as error:

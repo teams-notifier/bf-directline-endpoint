@@ -34,6 +34,8 @@ jobs:
             esac
             SEMVER_CORE="${TAG%%-*}"
             IMG_TAGS="${IMG_TAGS} $TAG ${SEMVER_CORE%.*}${RELEASE} ${SEMVER_CORE%%.*}${RELEASE}"
+            echo "TAG=$TAG" >>$GITHUB_ENV
+            echo "SEMVER_CORE=$SEMVER_CORE" >>$GITHUB_ENV
           fi
 
           echo "Targets:"

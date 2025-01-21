@@ -55,6 +55,8 @@ class DBHelper:
                 dsn=self._config.DATABASE_URL,
                 server_settings={"application_name": "notiteams"},
                 connection_class=NoResetConnection,
+                min_size=self._config.DATABASE_POOL_MIN_SIZE,
+                max_size=self._config.DATABASE_POOL_MAX_SIZE,
             )
             if self._pool is None:
                 raise RuntimeError("could not create database connection pool")
